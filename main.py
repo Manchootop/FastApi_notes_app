@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import FastAPI, APIRouter
+from sqlalchemy import desc
 from starlette import status
 import models
 import schemas
@@ -26,7 +27,7 @@ def get_routes():
 
 @app.get('/notes')
 async def get_notes(db: Session = Depends(get_db)):
-    notes_objects = db.query(Note).all()
+    notes_objects = db.query(Note).order_by(desc(Note.timestamp)).all()
     return notes_objects
 
 @app.get('/notes/<pk>', response_model=List[schemas.NoteBase], )
