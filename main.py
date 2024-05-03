@@ -53,7 +53,10 @@ def update_note(pk: int, note: schemas.NoteBase, db: Session = Depends(get_db)):
     if note_object is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Note not found')
 
-    note_object.update(**note.dict())
+        # Update the attributes of the note_object
+    note_object.title = note.title
+    note_object.text = note.text
+
     db.commit()
 
     return note_object

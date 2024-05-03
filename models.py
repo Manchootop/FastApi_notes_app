@@ -8,5 +8,9 @@ class Note(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(150),)
     text = Column(String())
-    timestamp = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    timestamp = Column(
+        TIMESTAMP(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
 
