@@ -30,9 +30,9 @@ async def get_notes(db: Session = Depends(get_db)):
     notes_objects = db.query(Note).order_by(desc(Note.timestamp)).all()
     return notes_objects
 
-@app.get('/notes/<pk>', response_model=List[schemas.NoteBase], )
+@app.get('/notes/<pk>', response_model=schemas.NoteBase)
 def get_note(pk: int, db: Session = Depends(get_db)):
-    note_object = db.query(Note).get(pk)
+    note_object = db.query(Note).filter(Note.id==pk).first()
     if note_object is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Note not found')
     return note_object
@@ -65,11 +65,11 @@ def update_note(pk: int, note: schemas.NoteBase, db: Session = Depends(get_db)):
 @app.delete('/notes/<pk>', status_code=status.HTTP_204_NO_CONTENT)
 def delete_note(pk: int, db: Session = Depends(get_db)):
 
-    note_object = db.query(Note).get(pk)
+    note_object = db.query(Note).filter(Note.id == pk).first()
 
     if note_object is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Note not found')
 
-    note_object.delete()
+    db.delete(note_object)
     db.commit()
     return {'message': 'Note deleted'}
